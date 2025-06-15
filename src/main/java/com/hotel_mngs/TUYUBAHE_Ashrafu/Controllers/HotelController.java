@@ -28,11 +28,13 @@ public class HotelController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     public List<Hotel> getAllHotels() {
         return hotelService.getAllHotels();
     }
 
     @GetMapping("/hotel")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     public ResponseEntity<Hotel> getHotelById(@RequestParam Long id) {
         return ResponseEntity.ok(hotelService.getHotelById(id));
     }

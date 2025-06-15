@@ -46,6 +46,7 @@ public class BookingController {
     }
 
     @GetMapping("/billing/{bookingId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     public ResponseEntity<Billing> getBilling(@PathVariable Long bookingId) {
         return ResponseEntity.ok(bookingService.getBillingForBooking(bookingId));
     }

@@ -16,7 +16,6 @@ import com.hotel_mngs.TUYUBAHE_Ashrafu.Models.User;
 import com.hotel_mngs.TUYUBAHE_Ashrafu.Repository.UserRepository;
 import com.hotel_mngs.TUYUBAHE_Ashrafu.Service.AuthService;
 
-
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -51,14 +50,17 @@ public class AuthServiceImpl implements AuthService {
         user.setUserName(registerDto.getUserName());
         user.setUserEmail(registerDto.getUserEmail());
         user.setUserPassword(hashedPassword);
-       
 
         userRepository.save(user);
 
+        // Send welcome email after registration
+        String subject = "Welcome to Hotel Booking App!";
+        String body = "Dear " + user.getUserName()
+                + ",\n\nThank you for registering at our hotel booking platform.\n\nBest regards,\nHotel Booking Team";
+        mailService.sendEmail(user.getUserEmail(), subject, body);
+
         return "User registered successfully";
     }
-
-
 
     @Override
     public LoginResponseDto loginUser(LoginDto loginDto) {
@@ -67,14 +69,15 @@ public class AuthServiceImpl implements AuthService {
                     new UsernamePasswordAuthenticationToken(
                             loginDto.getUserName(),
                             loginDto.getUserPassword()));
-    
+
             if (authentication.isAuthenticated()) {
                 User user = userRepository.findByUserName(loginDto.getUserName())
                         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    
+
                 String token = jwtService.generateToken(loginDto.getUserName());
-    
-                return new LoginResponseDto(token, user.getUserName(), user.getUserEmail(), "Login successful",user.getUserId());
+
+                return new LoginResponseDto(token, user.getUserName(), user.getUserEmail(), "Login successful",
+                        user.getUserId());
             }
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Invalid username or password");
@@ -83,13 +86,6 @@ public class AuthServiceImpl implements AuthService {
         }
         throw new RuntimeException("Login failed");
     }
-    
-
-
-
-
-
-        
 
     @Override
     public String logoutrUser() {

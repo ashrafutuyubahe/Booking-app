@@ -28,6 +28,7 @@ public class RoomController {
     }
 
     @GetMapping("/hotels/{hotelId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     public List<Room> getRoomsByHotel(@PathVariable Long hotelId) {
         return roomService.getRoomsByHotelId(hotelId);
     }

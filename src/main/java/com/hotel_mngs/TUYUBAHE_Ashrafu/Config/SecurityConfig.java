@@ -39,13 +39,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/agro-volve/api/v1/auth/login",
-                                "/agro-volve/api/v1/auth/register",
+                                "/api/auth/login",
+                                "/api/auth/register",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
+                        .requestMatchers("/api/hotels", "/api/rooms", "/api/hotels/**", "/api/rooms/**").hasRole("ADMIN")
+                        .requestMatchers("/api/booking/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
